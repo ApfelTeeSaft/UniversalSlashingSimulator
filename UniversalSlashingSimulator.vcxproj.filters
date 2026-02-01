@@ -56,8 +56,10 @@
     <Filter Include="Entry">
       <UniqueIdentifier>{I7Q6P5R4-3N2M-8Q1L-P0O9-R8Q7P6O5N4M3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Diagnostics">
+      <UniqueIdentifier>{0959a4cf-e16b-41c6-8c08-dcc99defca03}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
-
   <!-- Source Files -->
   <ItemGroup>
     <!-- Core -->
@@ -70,7 +72,6 @@
     <ClCompile Include="Core\Versioning\VersionResolver.cpp">
       <Filter>Core\Versioning</Filter>
     </ClCompile>
-
     <!-- Engine -->
     <ClCompile Include="Engine\CoreTypes\ObjectArray.cpp">
       <Filter>Engine\CoreTypes</Filter>
@@ -96,7 +97,6 @@
     <ClCompile Include="Engine\EngineCore.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-
     <!-- STW -->
     <ClCompile Include="STW\GameMode\STWGameMode.cpp">
       <Filter>STW\GameMode</Filter>
@@ -119,13 +119,14 @@
     <ClCompile Include="STW\Building\BuildingManager.cpp">
       <Filter>STW\Building</Filter>
     </ClCompile>
-
     <!-- Entry -->
     <ClCompile Include="Entry\DllMain.cpp">
       <Filter>Entry</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Diagnostics\CrashHandler.cpp">
+      <Filter>Core\Diagnostics</Filter>
+    </ClCompile>
   </ItemGroup>
-
   <!-- Header Files -->
   <ItemGroup>
     <!-- Core -->
@@ -150,7 +151,6 @@
     <ClInclude Include="Core\Hooks\HookTypes.h">
       <Filter>Core\Hooks</Filter>
     </ClInclude>
-
     <!-- Engine -->
     <ClInclude Include="Engine\CoreTypes\ObjectArray.h">
       <Filter>Engine\CoreTypes</Filter>
@@ -176,7 +176,6 @@
     <ClInclude Include="Engine\EngineCore.h">
       <Filter>Engine</Filter>
     </ClInclude>
-
     <!-- STW -->
     <ClInclude Include="STW\GameMode\STWGameMode.h">
       <Filter>STW\GameMode</Filter>
@@ -207,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="STW\Building\BuildingTypes.h">
       <Filter>STW\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Diagnostics\CrashHandler.h">
+      <Filter>Core\Diagnostics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

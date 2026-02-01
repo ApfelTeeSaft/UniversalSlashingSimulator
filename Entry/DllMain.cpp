@@ -25,6 +25,7 @@
 
 #include "../Core/Common.h"
 #include "../Core/Logging/Log.h"
+#include "../Core/Diagnostics/CrashHandler.h"
 #include "../Engine/EngineCore.h"
 #include "../STW/GameMode/STWGameMode.h"
 #include "../STW/Missions/MissionManager.h"
@@ -208,11 +209,18 @@ namespace USS
 
     DWORD WINAPI InitializationThread(LPVOID lpParam)
     {
+        // Initialize logging first
         EResult Result = Log::Initialize(true, "USS_Log.txt");
         if (Result != EResult::Success)
         {
             MessageBoxA(nullptr, "Failed to initialize logging", "USS Error", MB_ICONERROR);
             return 1;
+        }
+
+        Result = FCrashHandler::Initialize();
+        if (Result != EResult::Success)
+        {
+            USS_WARN("Failed to initialize crash handler - crashes may not be logged");
         }
 
         USS_LOG("========================================");
@@ -304,6 +312,8 @@ namespace USS
         GetSTWGameMode().Shutdown();
 
         GetEngineCore().Shutdown();
+
+        FCrashHandler::Shutdown();
 
         Log::Shutdown();
 

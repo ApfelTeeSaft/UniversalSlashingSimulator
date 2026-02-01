@@ -74,7 +74,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)external\minhook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -100,7 +100,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>psapi.lib;dbghelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)external\minhook\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
@@ -111,6 +111,7 @@
     <ClCompile Include="Core\Logging\Log.cpp" />
     <ClCompile Include="Core\Memory\Memory.cpp" />
     <ClCompile Include="Core\Versioning\VersionResolver.cpp" />
+    <ClCompile Include="Core\Diagnostics\CrashHandler.cpp" />
     <!-- Engine -->
     <ClCompile Include="Engine\CoreTypes\ObjectArray.cpp" />
     <ClCompile Include="Engine\CoreTypes\NamePool.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="Core\Versioning\VersionInfo.h" />
     <ClInclude Include="Core\Versioning\VersionResolver.h" />
     <ClInclude Include="Core\Hooks\HookTypes.h" />
+    <ClInclude Include="Core\Diagnostics\CrashHandler.h" />
     <!-- Engine -->
     <ClInclude Include="Engine\CoreTypes\ObjectArray.h" />
     <ClInclude Include="Engine\CoreTypes\NamePool.h" />
