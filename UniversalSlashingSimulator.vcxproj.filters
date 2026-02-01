@@ -56,9 +56,6 @@
     <Filter Include="Entry">
       <UniqueIdentifier>{I7Q6P5R4-3N2M-8Q1L-P0O9-R8Q7P6O5N4M3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Diagnostics">
-      <UniqueIdentifier>{0959a4cf-e16b-41c6-8c08-dcc99defca03}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <!-- Source Files -->
   <ItemGroup>
@@ -123,8 +120,8 @@
     <ClCompile Include="Entry\DllMain.cpp">
       <Filter>Entry</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Diagnostics\CrashHandler.cpp">
-      <Filter>Core\Diagnostics</Filter>
+    <ClCompile Include="Core\Memory\PatternScanner.cpp">
+      <Filter>Core\Memory</Filter>
     </ClCompile>
   </ItemGroup>
   <!-- Header Files -->
@@ -206,9 +203,6 @@
     </ClInclude>
     <ClInclude Include="STW\Building\BuildingTypes.h">
       <Filter>STW\Building</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Diagnostics\CrashHandler.h">
-      <Filter>Core\Diagnostics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -382,13 +382,15 @@ namespace USS
 
         // Pattern for GetEngineVersion (varies by version)
         // @timmie
-        uintptr_t CLAddr = TAOF::FindPattern(
-            "48 8D 05 ?? ?? ?? ?? C3 CC CC CC CC CC CC CC CC 48 8D 05 ?? ?? ?? ?? C3"
-        );
+        uintptr_t CLAddr = PatternScanner::Get()->FindGetEngineVersion();
 
-        if (CLAddr)
+        if (CLAddr != -1)
         {
-            uintptr_t StringAddr = TAOF::ResolveRelativeAddress(CLAddr, 7, 3);
+            //uintptr_t StringAddr = TAOF::ResolveRelativeAddress(CLAddr, 7, 3);
+            
+            // TODO: we need FString Implement class to do GetEngineVersion string
+            static FString(*GetEngineVersion)() = decltype(GetEngineVersion)(CLAddr);
+
             if (StringAddr)
             {
                 char VersionStr[64] = {};
