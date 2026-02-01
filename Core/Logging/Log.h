@@ -8,7 +8,6 @@
 #pragma once
 
 #include "../Common.h"
-#include <mutex>
 #include <fstream>
 #include <cstdarg>
 
@@ -31,6 +30,7 @@ namespace USS
         USS_NON_MOVABLE(Log)
 
         static EResult Initialize(bool bEnableConsole = true, const char* LogFilePath = nullptr);
+
         static void Shutdown();
 
         static void Write(ELogLevel Level, const char* Format, ...);
@@ -47,7 +47,7 @@ namespace USS
 
         static void WriteInternal(ELogLevel Level, const char* Message);
 
-        static std::mutex s_Mutex;
+        static FCriticalSection s_CriticalSection;
         static std::ofstream s_FileStream;
         static ELogLevel s_MinLevel;
         static bool s_bConsoleEnabled;

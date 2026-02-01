@@ -8,7 +8,7 @@
 
 namespace USS
 {
-    std::mutex Log::s_Mutex;
+    FCriticalSection Log::s_CriticalSection;
     std::ofstream Log::s_FileStream;
     ELogLevel Log::s_MinLevel = ELogLevel::Info;
     bool Log::s_bConsoleEnabled = false;
@@ -17,7 +17,7 @@ namespace USS
 
     EResult Log::Initialize(bool bEnableConsole, const char* LogFilePath)
     {
-        std::lock_guard<std::mutex> Lock(s_Mutex);
+        FScopedLock Lock(s_CriticalSection);
 
         if (s_bInitialized)
             return EResult::AlreadyInitialized;
@@ -48,7 +48,7 @@ namespace USS
 
     void Log::Shutdown()
     {
-        std::lock_guard<std::mutex> Lock(s_Mutex);
+        FScopedLock Lock(s_CriticalSection);
 
         if (!s_bInitialized)
             return;
@@ -90,7 +90,7 @@ namespace USS
 
     void Log::SetMinLevel(ELogLevel Level)
     {
-        std::lock_guard<std::mutex> Lock(s_Mutex);
+        FScopedLock Lock(s_CriticalSection);
         s_MinLevel = Level;
     }
 
@@ -110,7 +110,7 @@ namespace USS
 
     void Log::WriteInternal(ELogLevel Level, const char* Message)
     {
-        std::lock_guard<std::mutex> Lock(s_Mutex);
+        FScopedLock Lock(s_CriticalSection);
 
         if (!s_bInitialized)
             return;

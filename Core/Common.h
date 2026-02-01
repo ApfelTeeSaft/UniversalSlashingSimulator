@@ -22,6 +22,47 @@
 
 namespace USS
 {
+    // ========================================================================
+    // CRITICAL_SECTION RAII Wrapper
+    // ========================================================================
+
+    /**
+     * RAII wrapper for Windows CRITICAL_SECTION
+     * Safer than std::mutex when injected into processes - doesn't depend on CRT initialization
+     */
+    class FCriticalSection
+    {
+    public:
+        FCriticalSection() { InitializeCriticalSection(&m_CS); }
+        ~FCriticalSection() { DeleteCriticalSection(&m_CS); }
+
+        FCriticalSection(const FCriticalSection&) = delete;
+        FCriticalSection& operator=(const FCriticalSection&) = delete;
+
+        void Lock() { EnterCriticalSection(&m_CS); }
+        void Unlock() { LeaveCriticalSection(&m_CS); }
+        bool TryLock() { return TryEnterCriticalSection(&m_CS) != 0; }
+
+    private:
+        CRITICAL_SECTION m_CS;
+    };
+
+    /**
+     * RAII lock guard for FCriticalSection
+     */
+    class FScopedLock
+    {
+    public:
+        explicit FScopedLock(FCriticalSection& CS) : m_CS(CS) { m_CS.Lock(); }
+        ~FScopedLock() { m_CS.Unlock(); }
+
+        FScopedLock(const FScopedLock&) = delete;
+        FScopedLock& operator=(const FScopedLock&) = delete;
+
+    private:
+        FCriticalSection& m_CS;
+    };
+
     using int8 = int8_t;
     using int16 = int16_t;
     using int32 = int32_t;
@@ -86,26 +127,26 @@ namespace USS
         }
     }
 
-    #define USS_INTERFACE class
+#define USS_INTERFACE class
 
-    #define USS_NON_COPYABLE(ClassName) \
+#define USS_NON_COPYABLE(ClassName) \
         ClassName(const ClassName&) = delete; \
         ClassName& operator=(const ClassName&) = delete;
 
-    #define USS_NON_MOVABLE(ClassName) \
+#define USS_NON_MOVABLE(ClassName) \
         ClassName(ClassName&&) = delete; \
         ClassName& operator=(ClassName&&) = delete;
 
-    #ifdef USS_DEBUG
-        #define USS_LOG(fmt, ...) ::USS::Log::Write(::USS::ELogLevel::Info, fmt, ##__VA_ARGS__)
-        #define USS_WARN(fmt, ...) ::USS::Log::Write(::USS::ELogLevel::Warning, fmt, ##__VA_ARGS__)
-        #define USS_ERROR(fmt, ...) ::USS::Log::Write(::USS::ELogLevel::Error, fmt, ##__VA_ARGS__)
-    #else
-        #define USS_LOG(fmt, ...) ((void)0)
-        #define USS_WARN(fmt, ...) ((void)0)
-        #define USS_ERROR(fmt, ...) ((void)0)
-    #endif
+#ifdef USS_DEBUG
+#define USS_LOG(fmt, ...) ::USS::Log::Write(::USS::ELogLevel::Info, fmt, ##__VA_ARGS__)
+#define USS_WARN(fmt, ...) ::USS::Log::Write(::USS::ELogLevel::Warning, fmt, ##__VA_ARGS__)
+#define USS_ERROR(fmt, ...) ::USS::Log::Write(::USS::ELogLevel::Error, fmt, ##__VA_ARGS__)
+#else
+#define USS_LOG(fmt, ...) ((void)0)
+#define USS_WARN(fmt, ...) ((void)0)
+#define USS_ERROR(fmt, ...) ((void)0)
+#endif
 
-    #define USS_FATAL(fmt, ...) ::USS::Log::Write(::USS::ELogLevel::Fatal, fmt, ##__VA_ARGS__)
+#define USS_FATAL(fmt, ...) ::USS::Log::Write(::USS::ELogLevel::Fatal, fmt, ##__VA_ARGS__)
 
 }

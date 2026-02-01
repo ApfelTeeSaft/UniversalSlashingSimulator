@@ -12,7 +12,6 @@
 #include <MinHook.h>
 #include <functional>
 #include <vector>
-#include <mutex>
 
 namespace USS
 {
@@ -20,11 +19,10 @@ namespace USS
 
     namespace Hook
     {
-        // Internal state
         namespace Detail
         {
             inline bool g_bInitialized = false;
-            inline std::mutex g_Mutex;
+            inline FCriticalSection g_CriticalSection;
         }
 
         /**
@@ -33,7 +31,7 @@ namespace USS
          */
         inline EResult Initialize()
         {
-            std::lock_guard<std::mutex> Lock(Detail::g_Mutex);
+            FScopedLock Lock(Detail::g_CriticalSection);
 
             if (Detail::g_bInitialized)
                 return EResult::AlreadyInitialized;
@@ -56,7 +54,7 @@ namespace USS
          */
         inline void Shutdown()
         {
-            std::lock_guard<std::mutex> Lock(Detail::g_Mutex);
+            FScopedLock Lock(Detail::g_CriticalSection);
 
             if (!Detail::g_bInitialized)
                 return;
@@ -299,29 +297,25 @@ namespace USS
             return Instance;
         }
 
-        // Register a pre-ProcessEvent callback
-        // Return false from callback to block the original function
         void RegisterPre(PreCallback Callback)
         {
-            std::lock_guard<std::mutex> Lock(m_Mutex);
+            FScopedLock Lock(m_CriticalSection);
             m_PreCallbacks.push_back(std::move(Callback));
         }
 
-        // Register a post-ProcessEvent callback
         void RegisterPost(PostCallback Callback)
         {
-            std::lock_guard<std::mutex> Lock(m_Mutex);
+            FScopedLock Lock(m_CriticalSection);
             m_PostCallbacks.push_back(std::move(Callback));
         }
 
-        // Called from the hook detour - dispatch to pre-callbacks
         bool DispatchPre(void* Object, void* Function, void* Params)
         {
             bool bCallOriginal = true;
 
             std::vector<PreCallback> Callbacks;
             {
-                std::lock_guard<std::mutex> Lock(m_Mutex);
+                FScopedLock Lock(m_CriticalSection);
                 Callbacks = m_PreCallbacks;
             }
 
@@ -333,12 +327,11 @@ namespace USS
             return bCallOriginal;
         }
 
-        // Called from the hook detour - dispatch to post-callbacks
         void DispatchPost(void* Object, void* Function, void* Params)
         {
             std::vector<PostCallback> Callbacks;
             {
-                std::lock_guard<std::mutex> Lock(m_Mutex);
+                FScopedLock Lock(m_CriticalSection);
                 Callbacks = m_PostCallbacks;
             }
 
@@ -348,13 +341,12 @@ namespace USS
             }
         }
 
-        // Set/get original function pointer
         void SetOriginal(ProcessEventFn Original) { m_pOriginal = Original; }
         ProcessEventFn GetOriginal() const { return m_pOriginal; }
 
         void ClearCallbacks()
         {
-            std::lock_guard<std::mutex> Lock(m_Mutex);
+            FScopedLock Lock(m_CriticalSection);
             m_PreCallbacks.clear();
             m_PostCallbacks.clear();
         }
@@ -362,7 +354,7 @@ namespace USS
     private:
         FSimpleProcessEventDispatcher() : m_pOriginal(nullptr) {}
 
-        std::mutex m_Mutex;
+        FCriticalSection m_CriticalSection;
         std::vector<PreCallback> m_PreCallbacks;
         std::vector<PostCallback> m_PostCallbacks;
         ProcessEventFn m_pOriginal;
