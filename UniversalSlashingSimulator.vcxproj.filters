@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Filter Definitions -->
+  <ItemGroup>
+    <Filter Include="Core">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Logging">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Memory">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Versioning">
+      <UniqueIdentifier>{A3C2E5D1-9B8F-4C7E-B6A5-D4F3E2C1B0A9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Hooks">
+      <UniqueIdentifier>{B4D3C2E1-0A9F-5D8E-C7B6-E5F4D3C2B1A0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{C5E4D3F2-1B0A-6E9F-D8C7-F6E5D4C3B2A1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\CoreTypes">
+      <UniqueIdentifier>{D6F5E4G3-2C1B-7F0A-E9D8-G7F6E5D4C3B2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\UObject">
+      <UniqueIdentifier>{E7G6F5H4-3D2C-8G1B-F0E9-H8G7F6E5D4C3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Reflection">
+      <UniqueIdentifier>{F8H7G6I5-4E3D-9H2C-G1F0-I9H8G7F6E5D4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Replication">
+      <UniqueIdentifier>{A9I8H7J6-5F4E-0I3D-H2G1-J0I9H8G7F6E5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Events">
+      <UniqueIdentifier>{B0J9I8K7-6G5F-1J4E-I3H2-K1J0I9H8G7F6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STW">
+      <UniqueIdentifier>{C1K0J9L8-7H6G-2K5F-J4I3-L2K1J0I9H8G7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STW\GameMode">
+      <UniqueIdentifier>{D2L1K0M9-8I7H-3L6G-K5J4-M3L2K1J0I9H8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STW\Missions">
+      <UniqueIdentifier>{E3M2L1N0-9J8I-4M7H-L6K5-N4M3L2K1J0I9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STW\Player">
+      <UniqueIdentifier>{F4N3M2O1-0K9J-5N8I-M7L6-O5N4M3L2K1J0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STW\Inventory">
+      <UniqueIdentifier>{G5O4N3P2-1L0K-6O9J-N8M7-P6O5N4M3L2K1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STW\Building">
+      <UniqueIdentifier>{H6P5O4Q3-2M1L-7P0K-O9N8-Q7P6O5N4M3L2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entry">
+      <UniqueIdentifier>{I7Q6P5R4-3N2M-8Q1L-P0O9-R8Q7P6O5N4M3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+
+  <!-- Source Files -->
+  <ItemGroup>
+    <!-- Core -->
+    <ClCompile Include="Core\Logging\Log.cpp">
+      <Filter>Core\Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Memory\Memory.cpp">
+      <Filter>Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Versioning\VersionResolver.cpp">
+      <Filter>Core\Versioning</Filter>
+    </ClCompile>
+
+    <!-- Engine -->
+    <ClCompile Include="Engine\CoreTypes\ObjectArray.cpp">
+      <Filter>Engine\CoreTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CoreTypes\NamePool.cpp">
+      <Filter>Engine\CoreTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\CoreTypes\OffsetResolver.cpp">
+      <Filter>Engine\CoreTypes</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\UObject\UObjectWrapper.cpp">
+      <Filter>Engine\UObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Reflection\PropertyIterator.cpp">
+      <Filter>Engine\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Replication\FastArraySerializer.cpp">
+      <Filter>Engine\Replication</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Events\ProcessEventDispatcher.cpp">
+      <Filter>Engine\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\EngineCore.cpp">
+      <Filter>Engine</Filter>
+    </ClCompile>
+
+    <!-- STW -->
+    <ClCompile Include="STW\GameMode\STWGameMode.cpp">
+      <Filter>STW\GameMode</Filter>
+    </ClCompile>
+    <ClCompile Include="STW\Missions\MissionManager.cpp">
+      <Filter>STW\Missions</Filter>
+    </ClCompile>
+    <ClCompile Include="STW\Missions\MissionObjective.cpp">
+      <Filter>STW\Missions</Filter>
+    </ClCompile>
+    <ClCompile Include="STW\Player\STWPlayerController.cpp">
+      <Filter>STW\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="STW\Player\STWPlayerPawn.cpp">
+      <Filter>STW\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="STW\Inventory\InventoryManager.cpp">
+      <Filter>STW\Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="STW\Building\BuildingManager.cpp">
+      <Filter>STW\Building</Filter>
+    </ClCompile>
+
+    <!-- Entry -->
+    <ClCompile Include="Entry\DllMain.cpp">
+      <Filter>Entry</Filter>
+    </ClCompile>
+  </ItemGroup>
+
+  <!-- Header Files -->
+  <ItemGroup>
+    <!-- Core -->
+    <ClInclude Include="Core\Common.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Logging\Log.h">
+      <Filter>Core\Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\Memory.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Memory\PatternScanner.h">
+      <Filter>Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Versioning\VersionInfo.h">
+      <Filter>Core\Versioning</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Versioning\VersionResolver.h">
+      <Filter>Core\Versioning</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Hooks\HookTypes.h">
+      <Filter>Core\Hooks</Filter>
+    </ClInclude>
+
+    <!-- Engine -->
+    <ClInclude Include="Engine\CoreTypes\ObjectArray.h">
+      <Filter>Engine\CoreTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CoreTypes\NamePool.h">
+      <Filter>Engine\CoreTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\CoreTypes\OffsetResolver.h">
+      <Filter>Engine\CoreTypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\UObject\UObjectWrapper.h">
+      <Filter>Engine\UObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Reflection\PropertyIterator.h">
+      <Filter>Engine\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Replication\FastArraySerializer.h">
+      <Filter>Engine\Replication</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Events\ProcessEventDispatcher.h">
+      <Filter>Engine\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\EngineCore.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+
+    <!-- STW -->
+    <ClInclude Include="STW\GameMode\STWGameMode.h">
+      <Filter>STW\GameMode</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Missions\MissionManager.h">
+      <Filter>STW\Missions</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Missions\MissionObjective.h">
+      <Filter>STW\Missions</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Missions\MissionTypes.h">
+      <Filter>STW\Missions</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Player\STWPlayerController.h">
+      <Filter>STW\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Player\STWPlayerPawn.h">
+      <Filter>STW\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Inventory\InventoryManager.h">
+      <Filter>STW\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Inventory\InventoryTypes.h">
+      <Filter>STW\Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Building\BuildingManager.h">
+      <Filter>STW\Building</Filter>
+    </ClInclude>
+    <ClInclude Include="STW\Building\BuildingTypes.h">
+      <Filter>STW\Building</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
