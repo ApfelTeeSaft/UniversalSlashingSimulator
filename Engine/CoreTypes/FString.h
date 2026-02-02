@@ -9,6 +9,14 @@
  *   - Data pointer (TCHAR*)
  *   - ArrayNum (int32) - number of elements including null terminator
  *   - ArrayMax (int32) - allocated capacity
+ *
+ * OWNERSHIP TRACKING:
+ * To safely interop with engine functions that return FString by value, we use
+ * the sign bit of m_Max to track memory ownership:
+ *   - Positive m_Max: External memory (engine-allocated), DO NOT free
+ *   - Negative m_Max: We own the memory, free with delete[]
+ * This maintains ABI compatibility while preventing crashes from attempting
+ * to delete[] memory allocated by UE's GMalloc.
  */
 
 #pragma once
@@ -16,9 +24,13 @@
 #include "../../Core/Common.h"
 #include "../../Core/Memory/Memory.h"
 #include <string>
+#include <cstdlib>
 
 namespace USS
 {
+    // Ownership flag stored in sign bit of m_Max
+    constexpr int32 FSTRING_OWNED_FLAG = static_cast<int32>(0x80000000);
+
     /**
      * Read-only view of an FString in memory
      * Used for reading FString data returned by engine functions
@@ -29,7 +41,8 @@ namespace USS
         FStringView() : m_Data(nullptr), m_Num(0), m_Max(0) {}
 
         FStringView(const wchar_t* Data, int32 Num, int32 Max)
-            : m_Data(Data), m_Num(Num), m_Max(Max) {}
+            : m_Data(Data), m_Num(Num), m_Max(Max) {
+        }
 
         // Read from memory address (where FString struct is located)
         static FStringView FromAddress(uintptr_t Address)
@@ -128,6 +141,14 @@ namespace USS
     /**
      * FString wrapper class for creating and managing FString-compatible data
      * Can be passed to UE functions expecting FString parameters
+     *
+     * Supports both owned memory (allocated by us) and external memory
+     * (allocated by UE engine). This prevents crashes when receiving FString
+     * returns from engine functions, as we won't try to delete[] engine memory.
+     *
+     * Memory ownership is tracked via the sign bit of m_Max:
+     *   - When we allocate: m_Max is negative (has FSTRING_OWNED_FLAG set)
+     *   - When engine allocates: m_Max is positive (no flag)
      */
     class FString
     {
@@ -174,12 +195,15 @@ namespace USS
 
         explicit FString(const std::string& Str)
             : FString(Str.c_str())
-        {}
+        {
+        }
 
         explicit FString(const std::wstring& Str)
             : FString(Str.c_str())
-        {}
+        {
+        }
 
+        // Copy constructor - always creates our own copy that we own
         FString(const FString& Other)
         {
             if (Other.m_Data && Other.m_Num > 0)
@@ -196,10 +220,11 @@ namespace USS
             }
         }
 
+        // Move constructor - transfers ownership status
         FString(FString&& Other) noexcept
             : m_Data(Other.m_Data)
             , m_Num(Other.m_Num)
-            , m_Max(Other.m_Max)
+            , m_Max(Other.m_Max)  // Preserves ownership flag
         {
             Other.m_Data = nullptr;
             Other.m_Num = 0;
@@ -211,6 +236,7 @@ namespace USS
             Free();
         }
 
+        // Copy assignment - creates our own copy that we own
         FString& operator=(const FString& Other)
         {
             if (this != &Other)
@@ -226,6 +252,7 @@ namespace USS
             return *this;
         }
 
+        // Move assignment - transfers ownership status
         FString& operator=(FString&& Other) noexcept
         {
             if (this != &Other)
@@ -233,7 +260,7 @@ namespace USS
                 Free();
                 m_Data = Other.m_Data;
                 m_Num = Other.m_Num;
-                m_Max = Other.m_Max;
+                m_Max = Other.m_Max;  // Preserves ownership flag
                 Other.m_Data = nullptr;
                 Other.m_Num = 0;
                 Other.m_Max = 0;
@@ -247,19 +274,42 @@ namespace USS
         const wchar_t* GetData() const { return m_Data; }
         wchar_t* GetData() { return m_Data; }
 
+        // Check if we own the memory (vs engine-allocated)
+        bool OwnsMemory() const { return (m_Max & FSTRING_OWNED_FLAG) != 0; }
+
+        // Get actual capacity (strips ownership flag)
+        int32 Capacity() const { return m_Max & ~FSTRING_OWNED_FLAG; }
+
         FStringView AsView() const
         {
-            return FStringView(m_Data, m_Num, m_Max);
+            return FStringView(m_Data, m_Num, Capacity());
         }
 
         std::string ToString() const
         {
-            return AsView().ToString();
+            if (!IsValid() || IsEmpty())
+                return std::string();
+
+            std::string Result;
+            Result.reserve(Len());
+
+            // Direct memory access since we're in-process
+            for (int32 i = 0; i < Len(); ++i)
+            {
+                wchar_t Ch = m_Data[i];
+                if (Ch == 0) break;
+                Result += static_cast<char>(Ch & 0xFF);
+            }
+
+            return Result;
         }
 
         std::wstring ToWString() const
         {
-            return AsView().ToWString();
+            if (!IsValid() || IsEmpty())
+                return std::wstring();
+
+            return std::wstring(m_Data, Len());
         }
 
         // Get pointer to the FString struct data (for passing to UE functions)
@@ -267,30 +317,59 @@ namespace USS
         void* GetStructPtr() { return &m_Data; }
         const void* GetStructPtr() const { return &m_Data; }
 
+        /**
+         * Release ownership of the memory without freeing it.
+         * Use this when passing the string to engine functions that will take ownership,
+         * or when you've copied the data and want to prevent double-free.
+         */
+        void ReleaseOwnership()
+        {
+            // Clear the ownership flag (make m_Max positive)
+            m_Max &= ~FSTRING_OWNED_FLAG;
+        }
+
+        /**
+         * Create a deep copy of this string that we own.
+         * Useful when you receive an engine string and want to keep a copy.
+         */
+        FString Clone() const
+        {
+            FString Result;
+            if (m_Data && m_Num > 0)
+            {
+                Result.Allocate(m_Num);
+                memcpy(Result.m_Data, m_Data, m_Num * sizeof(wchar_t));
+                Result.m_Num = m_Num;
+            }
+            return Result;
+        }
+
     private:
         void Allocate(int32 Capacity)
         {
             Free();
             m_Data = new wchar_t[Capacity];
-            m_Max = Capacity;
+            // Set capacity with ownership flag (negative)
+            m_Max = Capacity | FSTRING_OWNED_FLAG;
             m_Num = 0;
         }
 
         void Free()
         {
-            if (m_Data)
+            // Only free if we own the memory (m_Max is negative / has ownership flag)
+            if (m_Data && OwnsMemory())
             {
                 delete[] m_Data;
-                m_Data = nullptr;
             }
+            m_Data = nullptr;
             m_Num = 0;
             m_Max = 0;
         }
 
-        // Memory layout must match UE's FString
+        // Memory layout must match UE's FString (3 members, same sizes)
         wchar_t* m_Data;    // AllocatorInstance.Data
         int32 m_Num;        // ArrayNum
-        int32 m_Max;        // ArrayMax
+        int32 m_Max;        // ArrayMax (sign bit = ownership flag)
     };
 
     static_assert(sizeof(FString) == sizeof(void*) + sizeof(int32) * 2,

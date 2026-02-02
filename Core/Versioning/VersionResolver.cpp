@@ -395,7 +395,10 @@ namespace USS
 
         FString EngineVersion = GetEngineVersion();
 
-        // @timmie NOTE: ToString looked fine to me but the issue is it's going to crash the game for an second
+        // Engine returns FString by value - our FString wrapper detects this via the
+        // ownership flag (sign bit of m_Max) and won't try to delete[] engine memory.
+        // Note: The engine-allocated buffer becomes a small one-time memory leak, which
+        // is acceptable for version detection that runs once at startup.
         std::string EngineVer = EngineVersion.ToString();
 
         size_t DashPos = EngineVer.find("-");
