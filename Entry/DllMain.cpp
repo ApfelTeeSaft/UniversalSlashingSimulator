@@ -217,11 +217,11 @@ namespace USS
             return 1;
         }
 
-        Result = FCrashHandler::Initialize();
+        /*Result = FCrashHandler::Initialize();
         if (Result != EResult::Success)
         {
             USS_WARN("Failed to initialize crash handler - crashes may not be logged");
-        }
+        }*/
 
         USS_LOG("========================================");
         USS_LOG("  UniversalSlashingSimulator v0.1.0");
@@ -313,7 +313,7 @@ namespace USS
 
         GetEngineCore().Shutdown();
 
-        FCrashHandler::Shutdown();
+        //FCrashHandler::Shutdown();
 
         Log::Shutdown();
 

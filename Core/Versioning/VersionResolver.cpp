@@ -9,6 +9,7 @@
 #include "../Memory/Memory.h"
 #include "../Memory/PatternScanner.h"
 #include "../Logging/Log.h"
+#include "../../Engine/CoreTypes/FString.h"
 #include <cstring>
 
 namespace USS
@@ -384,40 +385,31 @@ namespace USS
         // @timmie
         uintptr_t CLAddr = PatternScanner::Get()->FindGetEngineVersion();
 
-        if (CLAddr != -1)
+        if (CLAddr == 0)
         {
-            //uintptr_t StringAddr = TAOF::ResolveRelativeAddress(CLAddr, 7, 3);
-            
-            // TODO: we need FString Implement class to do GetEngineVersion string
-            static FString(*GetEngineVersion)() = decltype(GetEngineVersion)(CLAddr);
-
-            if (StringAddr)
-            {
-                char VersionStr[64] = {};
-                for (int i = 0; i < 63; ++i)
-                {
-                    char c = 0;
-                    Memory::Read<char>(StringAddr + i, c);
-                    if (c == 0)
-                        break;
-                    VersionStr[i] = c;
-                }
-
-                const char* CLStart = strstr(VersionStr, "-");
-                if (CLStart)
-                {
-                    uint32 CL = 0;
-                    if (sscanf(CLStart + 1, "%u", &CL) == 1 && CL > 0)
-                    {
-                        USS_LOG("Found CL from version function: %u", CL);
-                        return MapCLToVersion(CL);
-                    }
-                }
-            }
+            USS_LOG("CL detection via pattern failed");
+            return false;
         }
 
-        USS_LOG("CL detection via pattern failed");
-        return false;
+        static FString(*GetEngineVersion)() = decltype(GetEngineVersion)(CLAddr);
+
+        FString EngineVersion = GetEngineVersion();
+        std::string EngineVer = EngineVersion.ToString();
+
+        size_t DashPos = EngineVer.find("-");
+        size_t PlusPos = EngineVer.find("+++");
+
+        if (DashPos == std::string::npos || PlusPos == std::string::npos || PlusPos <= DashPos)
+        {
+            USS_LOG("Failed to parse CL from EngineVersion: %s", EngineVer.c_str());
+            return false;
+        }
+
+        std::string CLStr = EngineVer.substr(DashPos + 1, PlusPos - (DashPos + 1));
+        uint32 CL = static_cast<uint32>(std::strtoul(CLStr.c_str(), nullptr, 10));
+
+        USS_LOG("Found CL from version function: %u", CL);
+        return MapCLToVersion(CL);
     }
 
     bool FVersionResolver::TryDetectFromPatterns()

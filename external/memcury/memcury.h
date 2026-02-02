@@ -211,12 +211,12 @@ namespace Memcury
                 }
             }
 
-            auto message = std::format("Memcury caught an exception at [{:x}]\nPress Yes if you want the address to be copied to your clipboard", ExceptionInfo->ContextRecord->Rip);
+            /*auto message = std::format("Memcury caught an exception at [{:x}]\nPress Yes if you want the address to be copied to your clipboard", ExceptionInfo->ContextRecord->Rip);
             if (MessageBoxA(nullptr, message.c_str(), "Error", MB_ICONERROR | MB_YESNO) == IDYES)
             {
                 std::string clip = std::format("{:x}", ExceptionInfo->ContextRecord->Rip);
                 Util::CopyToClipboard(clip);
-            }
+            }*/
 
             PrintStack(ExceptionInfo->ContextRecord);
 
