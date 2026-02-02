@@ -394,6 +394,8 @@ namespace USS
         static FString(*GetEngineVersion)() = decltype(GetEngineVersion)(CLAddr);
 
         FString EngineVersion = GetEngineVersion();
+
+        // @timmie NOTE: ToString looked fine to me but the issue is it's going to crash the game for an second
         std::string EngineVer = EngineVersion.ToString();
 
         size_t DashPos = EngineVer.find("-");
