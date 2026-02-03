@@ -52,7 +52,7 @@ namespace USS
     private:
         bool TryDetectFromVersionInfo();
         bool TryDetectFromCL();
-        bool TryDetectFromPatterns();
+        //bool TryDetectFromPatterns();
 
         bool MapCLToVersion(uint32 CL);
         void ComputeFeatureFlags();

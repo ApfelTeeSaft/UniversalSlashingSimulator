@@ -31,6 +31,7 @@
 #include "../STW/Missions/MissionManager.h"
 #include "../STW/Inventory/InventoryManager.h"
 #include "../STW/Building/BuildingManager.h"
+#include "../Core/Memory/PatternScanner.h"
 #include <string>
 #include <sstream>
 
@@ -260,6 +261,8 @@ namespace USS
         USS_LOG("NewFastArray:     %s", Version.bUseNewFastArraySerializer ? "Yes" : "No");
         USS_LOG("TObjectPtr:       %s", Version.bUseTObjectPtr ? "Yes" : "No");
         USS_LOG("");
+
+        //printf("0x%llX\n", (unsigned long long)PatternScanner::Get()->FindProcessEvent());
 
         // Initialize STW systems
         USS_LOG("Initializing STW systems...");

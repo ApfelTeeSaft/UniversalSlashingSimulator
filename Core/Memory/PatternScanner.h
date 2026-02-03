@@ -9,4 +9,5 @@ public:
 	static PatternScanner* Get();
 public:
 	uintptr_t FindGetEngineVersion();
+	uintptr_t FindProcessEvent();
 };

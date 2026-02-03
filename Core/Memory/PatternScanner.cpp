@@ -14,3 +14,26 @@ uintptr_t PatternScanner::FindGetEngineVersion()
 
     return Results.Get();
 }
+
+uintptr_t PatternScanner::FindProcessEvent()
+{
+    auto Results = Memcury::Scanner::FindStringRef(L"BadProperty");
+    if (!Results.IsValid())
+        return 0;
+
+    uintptr_t Address = Results.Get();
+    uint8_t* Ptr = reinterpret_cast<uint8_t*>(Address);
+
+    for (int i = 0; i < 0x500; i++)
+    {
+        Ptr--;
+
+        if (Ptr[0] == 0xFF && Ptr[1] == 0x90)
+        {
+            int32_t Offset = *reinterpret_cast<int32_t*>(Ptr + 2);
+            return static_cast<uintptr_t>(Offset / 8);
+        }
+    }
+
+    return 0;
+}

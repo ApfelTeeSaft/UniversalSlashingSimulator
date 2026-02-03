@@ -255,10 +255,10 @@ namespace USS
         {
             USS_LOG("Version detected from CL mapping");
         }
-        else if (TryDetectFromPatterns())
+        /*else if (TryDetectFromPatterns())
         {
             USS_LOG("Version detected from memory patterns");
-        }
+        }*/
         else
         {
             USS_ERROR("Failed to detect version");
@@ -417,7 +417,7 @@ namespace USS
         return MapCLToVersion(CL);
     }
 
-    bool FVersionResolver::TryDetectFromPatterns()
+    /*bool FVersionResolver::TryDetectFromPatterns()
     {
         // Try to detect version from characteristic patterns
 
@@ -486,7 +486,7 @@ namespace USS
         m_VersionInfo.FortniteCL = 3724489;
 
         return true;
-    }
+    }*/
 
     bool FVersionResolver::MapCLToVersion(uint32 CL)
     {
